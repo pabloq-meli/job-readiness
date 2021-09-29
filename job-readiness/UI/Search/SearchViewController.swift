@@ -28,6 +28,11 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationController()
         setupSearchController()
+        viewModel.getCategories { error in
+            if error != nil {
+                print(error)
+            }
+        }
     }
     
     
