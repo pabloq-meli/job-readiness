@@ -27,15 +27,34 @@ class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationController()
+        setupSearchController()
     }
     
-    private func setupNavigationController() {
+    
+    private func setupSearchController() {
         searchController.searchBar.returnKeyType = .done
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.delegate = self
+        searchController.searchBar.tintColor = .darkText
+    }
+    
+    private func setupNavigationController() {
+        self.navigationItem.title = "Your Title"
         
+        navigationController?.navigationBar.isTranslucent = false
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = .meliColor
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.darkText]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+
+        navigationController?.navigationBar.tintColor = .white
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.compactAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        
     }
 }
 

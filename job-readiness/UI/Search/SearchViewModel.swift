@@ -8,5 +8,7 @@
 import Foundation
 
 class SearchViewModel {
-    
+    func getCategories(completion: @escaping (Error?) -> Void) {
+        
+    }
 }
