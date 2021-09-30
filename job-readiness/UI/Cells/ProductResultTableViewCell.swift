@@ -21,7 +21,10 @@ class ProductResultTableViewCell: UITableViewCell {
     
     
     func setup(viewModel: ProductResultCellViewModel) {
-        // TODO
+        if let attributes = viewModel.product.attributes {
+            productTitleLabel.text = attributes.title ?? "No title"
+        }
+
     }
     
 }

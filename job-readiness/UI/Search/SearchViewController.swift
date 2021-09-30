@@ -37,7 +37,6 @@ class SearchViewController: UIViewController {
         }
     }
     
-    
     private func setupSearchController() {
         searchController.searchBar.returnKeyType = .done
         searchController.obscuresBackgroundDuringPresentation = false
@@ -77,9 +76,24 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        _ = resultsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ProductResultTableViewCell
-        return UITableViewCell()
+        let cell = resultsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ProductResultTableViewCell
+        cell.selectionStyle = .none
+        
+        if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
+            if !(viewModel.products[indexPath.row].code > 300) {
+                cell.setup(viewModel: ProductResultCellViewModel(product: viewModel.products[indexPath.row]))
+            }
+        }
+
+        return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
+            if (viewModel.products[indexPath.row].code > 300) {
+                return 0
+            }
+        }
+        return 60
+    }
 }

@@ -10,7 +10,9 @@ import Alamofire
 
 class SearchViewModel {
     
-    var bestSellers: [Product] = []
+    var bestSellers: [BestSeller] = []
+    var products: [Product] = []
+    var itemsID: [String] = []
     
     func getCategories(completion: @escaping (Error?) -> Void) {
         APIClient.shared.performRequest(route: APIRouter.categories(query: "celular iphone")) { (result: Result<[Category], AFError>) in
@@ -33,14 +35,39 @@ class SearchViewModel {
     }
     
     func getBestSellersByCategory(categoryId: String, completion: @escaping (Error?) -> Void) {
-        APIClient.shared.performRequest(route: APIRouter.bestSellers(categoryId: categoryId)) { (result: Result<Products, AFError>) in
+        APIClient.shared.performRequest(route: APIRouter.bestSellers(categoryId: categoryId)) { (result: Result<BestSellers, AFError>) in
             switch result {
             case .success(let success):
                 self.bestSellers = success.content
+                self.getProductsInfo { error in
+                    guard error != nil else {
+                        completion(nil)
+                        return
+                    }
+                    
+                    completion(error)
+                }
                 print(self.bestSellers)
-                completion(nil)
             case .failure(let failure):
                 print(failure)
+                completion(failure)
+            }
+        }
+    }
+    
+    func getProductsInfo(completion: @escaping (Error?) -> Void) {
+        bestSellers.forEach { itemsID.append($0.id) }
+        APIClient.shared.performRequest(route: APIRouter.products(items: itemsID)) { (result: Result<[Product], AFError>) in
+            switch result {
+            case .success(let success):
+                for product in success {
+                    if !(product.code > 300) {
+                        
+                    }
+                    self.products.append(product)
+                }
+                completion(nil)
+            case .failure(let failure):
                 completion(failure)
             }
         }
