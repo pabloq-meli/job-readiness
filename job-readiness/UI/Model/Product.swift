@@ -51,6 +51,7 @@ struct Attributes: Codable {
     let currencyID: String?
     let condition: String?
     let acceptsMercadopago: Bool?
+    let pictures: [Picture]?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -62,6 +63,17 @@ struct Attributes: Codable {
         case currencyID = "currency_id"
         case condition
         case acceptsMercadopago = "accepts_mercadopago"
+        case pictures
     }
 }
 
+struct Picture: Codable {
+    let id: String
+    let url: String
+    let secureURL: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, url
+        case secureURL = "secure_url"
+    }
+}

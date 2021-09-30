@@ -7,4 +7,5 @@ target 'job-readiness' do
 
   # Pods for job-readiness
   pod 'Alamofire'
+  pod 'Kingfisher'
 end

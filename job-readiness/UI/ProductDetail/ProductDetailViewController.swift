@@ -8,26 +8,38 @@
 import UIKit
 
 class ProductDetailViewController: UIViewController {
-
+    
     // MARK: Outlets
     @IBOutlet private weak var productTitleLabel: UILabel!
-    @IBOutlet private weak var productImageView: UIImageView!
-    @IBOutlet private weak var productPriceLabel: UILabel!
-    @IBOutlet private weak var addToFavButton: UIButton! {
+    @IBOutlet private weak var productImagesCollectionView: UICollectionView! {
         didSet {
-            addToFavButton.setTitle("Add to favorites", for: [])
+            productImagesCollectionView.delegate = self
+            productImagesCollectionView.dataSource = self
+            productImagesCollectionView.register(UINib(nibName: String(describing: ProductImageCollectionViewCell.self), bundle: nil), forCellWithReuseIdentifier: String(describing: ProductImageCollectionViewCell.self))
+            
+            let flowLayout = UICollectionViewFlowLayout()
+            flowLayout.scrollDirection = .horizontal
+            flowLayout.itemSize = CGSize(width: 140, height: 210)
+            productImagesCollectionView.collectionViewLayout = flowLayout
+        }
+    }
+    
+    @IBOutlet private weak var productPriceLabel: UILabel!
+    @IBOutlet private weak var mercadoPagoImageView: UIImageView! {
+        didSet {
+            mercadoPagoImageView.isHidden = true
         }
     }
     
     // MARK: Properties
     var viewModel: ProductDetailViewModel
     
+    // MARK: Lifecycle
     init(viewModel: ProductDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
-    // MARK: Lifecycle
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -49,10 +61,35 @@ class ProductDetailViewController: UIViewController {
     }
     
     private func setupProductData() {
-        if let attributes = viewModel.product.attributes {
+        if let attributes = viewModel.product.attributes,
+           let price = attributes.price {
             productTitleLabel.text = attributes.title ?? "No title"
-            productPriceLabel.text = "\(attributes.price ?? 0)"
+            
+            switch attributes.currencyID {
+            case "USD":
+                productPriceLabel.attributedText = attributeString(currency: "USD", price: "\(price)")
+            default:
+                productPriceLabel.attributedText = attributeString(currency: "UYU", price: "\(price)")
+            }
+            
+            if let acceptsMercadoPago = attributes.acceptsMercadopago {
+                switch acceptsMercadoPago {
+                case true: mercadoPagoImageView.isHidden = false
+                case false: mercadoPagoImageView.isHidden = true
+                    
+                }
+            }
         }
+    }
+    
+    private func attributeString(currency: String, price: String) -> NSAttributedString {
+        let boldText = currency
+        let attrs = [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 18)]
+        let attributedString = NSMutableAttributedString(string:boldText, attributes:attrs)
+        let normalText = ": \(price)"
+        let normalString = NSMutableAttributedString(string:normalText)
+        attributedString.append(normalString)
+        return attributedString
     }
     
     @objc private func updateFavorite(_ sender: UIBarButtonItem) {
@@ -74,5 +111,17 @@ class ProductDetailViewController: UIViewController {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart")
         }
     }
+}
 
+// MARK: UICollectionViewDelegate
+extension ProductDetailViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return viewModel.product.attributes?.pictures?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = productImagesCollectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ProductImageCollectionViewCell.self), for: indexPath) as! ProductImageCollectionViewCell
+        cell.setup(viewModel: ProductImageCollectionViewModel(picture: viewModel.product.attributes?.pictures?[indexPath.row]))
+        return cell
+    }
 }

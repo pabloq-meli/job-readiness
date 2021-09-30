@@ -16,7 +16,7 @@ class APIClient {
     private init() { }
     
     /// request
-    func performRequest<T:Decodable>(route: APIRouter, decoder: JSONDecoder = JSONDecoder(), completion:@escaping (AFResult<T>)->Void) -> DataRequest {
+    func performRequest<T:Decodable>(route: APIRouter, decoder: JSONDecoder = JSONDecoder(), completion: @escaping (AFResult<T>) -> Void) -> DataRequest {
         AF.request(route)
             .responseDecodable (decoder: decoder){ (response: AFDataResponse<T>) in
                 completion(response.result)

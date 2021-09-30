@@ -58,7 +58,7 @@ class SearchViewController: UIViewController {
     }
 }
 
-// MARK: SearchController Delegate
+// MARK: SearchBar Delegate
 extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.fetchResults(_:)), object: searchBar)
@@ -72,6 +72,8 @@ extension SearchViewController: UISearchBarDelegate {
         
         viewModel.bestSellers.removeAll()
         viewModel.itemsID.removeAll()
+        viewModel.products.removeAll()
+        resultsTableView.reloadData()
 
         viewModel.getCategories(query: query) { error in
             if error == nil {
