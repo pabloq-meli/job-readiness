@@ -8,7 +8,7 @@
 import UIKit
 
 class SearchViewController: UIViewController {
-
+    
     // MARK: Outlets
     @IBOutlet private weak var resultsTableView: UITableView! {
         didSet {
@@ -52,12 +52,12 @@ class SearchViewController: UIViewController {
         appearance.backgroundColor = .meli
         appearance.titleTextAttributes = [.foregroundColor: UIColor.darkText]
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-
+        
         navigationController?.navigationBar.tintColor = .white
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.compactAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
-
+        
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         
@@ -82,7 +82,19 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
             cell.setup(viewModel: ProductResultCellViewModel(product: viewModel.products[indexPath.row]))
         }
-
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let product = viewModel.products[indexPath.row]
+        if let attributes = product.attributes {
+            if UserDefaults.standard.string(forKey: attributes.id) != nil {
+                navigationController?.pushViewController(ProductDetailViewController(viewModel: ProductDetailViewModel(isFavorite: true, product: product)), animated: true)
+            } else {
+                navigationController?.pushViewController(ProductDetailViewController(viewModel: ProductDetailViewModel(isFavorite: false, product: product)), animated: true)
+            }
+            
+        }
     }
 }

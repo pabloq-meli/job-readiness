@@ -15,10 +15,9 @@ class SearchViewModel {
     var itemsID: [String] = []
     
     func getCategories(completion: @escaping (Error?) -> Void) {
-        APIClient.shared.performRequest(route: APIRouter.categories(query: "celular iphone")) { (result: Result<[Category], AFError>) in
+        APIClient.shared.performRequest(route: APIRouter.categories(query: "tablet")) { (result: Result<[Category], AFError>) in
             switch result {
             case .success(let success):
-                print(success.first?.category_id)
                 self.getBestSellersByCategory(categoryId: success.first?.category_id ?? "") { error in
                     guard error != nil else {
                         completion(nil)
@@ -47,7 +46,6 @@ class SearchViewModel {
                     
                     completion(error)
                 }
-                print(self.bestSellers)
             case .failure(let failure):
                 print(failure)
                 completion(failure)
