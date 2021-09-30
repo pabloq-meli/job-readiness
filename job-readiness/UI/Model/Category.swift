@@ -9,4 +9,8 @@ import Foundation
 
 struct Category: Codable {
     let category_id: String
+    
+//    "domain_name": "Celulares",
+//    "category_id": "MLU1055",
+//    "category_name": "Celulares y Smartphones",
 }

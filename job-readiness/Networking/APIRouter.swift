@@ -10,47 +10,48 @@ import Alamofire
 
 enum APIRouter: URLRequestConvertible {
     
+    // MARK: Routes
     case categories(query: String)
+    case bestSellers(categoryId: String)
     
-    
-    // MARK: - HTTPMethod
+    // MARK: HTTPMethod
     private var method: HTTPMethod {
         switch self {
-        case .categories:
+        case .bestSellers, .categories:
             return .get
             
         }
     }
     
-    // MARK: - Path
+    // MARK: Path
     private var path: String {
         switch self {
-//        case .categories:
-//            return "posts/1"
+        case .bestSellers(let id):
+            return "highlights/\(API.site)/category/\(id)"
         case .categories(let query):
-            return "sites/\(API.site.rawValue)/domain_discovery/search?q=\(query)"
+            return "sites/\(API.site)/domain_discovery/search?q=\(query)"
         }
     }
     
-    // MARK: - Parameters
+    // MARK: Parameters
     private var parameters: Parameters? {
         switch self {
-        case .categories:
+        case .bestSellers, .categories:
             return nil
         }
     }
     
-    // MARK: - URLRequestConvertible
+    // MARK: URLRequestConvertible
     func asURLRequest() throws -> URLRequest {
         
         let encodedPath = path.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-        var urlRequest = URLRequest(url: URL(string: API.baseURL.rawValue + encodedPath)!)
+        var urlRequest = URLRequest(url: URL(string: API.baseURL + encodedPath)!)
         
         /// HTTP Method
         urlRequest.httpMethod = method.rawValue
         
         /// Set the Authorization header value using the access token.
-        urlRequest.setValue("Bearer " + API.accessToken.rawValue, forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("Bearer " + API.accessToken, forHTTPHeaderField: "Authorization")
         
         /// Parameters if added
         if let parameters = parameters {
