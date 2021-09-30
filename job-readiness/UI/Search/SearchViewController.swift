@@ -72,7 +72,7 @@ extension SearchViewController: UISearchBarDelegate {
 // MARK: TableView Delegates
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.bestSellers.count
+        return viewModel.products.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -80,20 +80,9 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
         cell.selectionStyle = .none
         
         if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
-            if !(viewModel.products[indexPath.row].code > 300) {
-                cell.setup(viewModel: ProductResultCellViewModel(product: viewModel.products[indexPath.row]))
-            }
+            cell.setup(viewModel: ProductResultCellViewModel(product: viewModel.products[indexPath.row]))
         }
 
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
-            if (viewModel.products[indexPath.row].code > 300) {
-                return 0
-            }
-        }
-        return 60
     }
 }

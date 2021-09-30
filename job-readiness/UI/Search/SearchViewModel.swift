@@ -62,9 +62,9 @@ class SearchViewModel {
             case .success(let success):
                 for product in success {
                     if !(product.code > 300) {
-                        
+                        self.products.append(product)
                     }
-                    self.products.append(product)
+
                 }
                 completion(nil)
             case .failure(let failure):
