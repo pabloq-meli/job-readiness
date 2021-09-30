@@ -8,5 +8,9 @@
 import Foundation
 
 class ProductResultCellViewModel {
+    var product: Product
     
+    init(product: Product) {
+        self.product = product
+    }
 }

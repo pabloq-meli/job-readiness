@@ -11,6 +11,7 @@ import UIKit
 enum API {
     static let baseURL = "https://api.mercadolibre.com/"
     static let accessToken = "APP_USR-6148044839167051-093013-b61ce4a4ed00f6f960ade47adbe0af79-242994307"
+    static var products = "items?ids="
     static let site = "MLU"
 }
 

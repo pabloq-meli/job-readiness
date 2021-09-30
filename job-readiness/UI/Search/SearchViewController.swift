@@ -37,7 +37,6 @@ class SearchViewController: UIViewController {
         }
     }
     
-    
     private func setupSearchController() {
         searchController.searchBar.returnKeyType = .done
         searchController.obscuresBackgroundDuringPresentation = false
@@ -73,13 +72,17 @@ extension SearchViewController: UISearchBarDelegate {
 // MARK: TableView Delegates
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.bestSellers.count
+        return viewModel.products.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        _ = resultsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ProductResultTableViewCell
-        return UITableViewCell()
+        let cell = resultsTableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ProductResultTableViewCell
+        cell.selectionStyle = .none
+        
+        if !viewModel.bestSellers.isEmpty && !viewModel.products.isEmpty {
+            cell.setup(viewModel: ProductResultCellViewModel(product: viewModel.products[indexPath.row]))
+        }
+
+        return cell
     }
-    
-    
 }

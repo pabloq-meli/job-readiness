@@ -13,11 +13,12 @@ enum APIRouter: URLRequestConvertible {
     // MARK: Routes
     case categories(query: String)
     case bestSellers(categoryId: String)
+    case products(items: [String])
     
     // MARK: HTTPMethod
     private var method: HTTPMethod {
         switch self {
-        case .bestSellers, .categories:
+        case .bestSellers, .categories, .products:
             return .get
             
         }
@@ -30,13 +31,17 @@ enum APIRouter: URLRequestConvertible {
             return "highlights/\(API.site)/category/\(id)"
         case .categories(let query):
             return "sites/\(API.site)/domain_discovery/search?q=\(query)"
+        case .products(let items):
+            var itemsPath = API.products
+            items.forEach { itemsPath += ($0 + ",")}
+            return itemsPath
         }
     }
     
     // MARK: Parameters
     private var parameters: Parameters? {
         switch self {
-        case .bestSellers, .categories:
+        case .bestSellers, .categories, .products:
             return nil
         }
     }
