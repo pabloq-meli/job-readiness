@@ -19,12 +19,10 @@ class ProductResultTableViewCell: UITableViewCell {
         // Initialization code
     }
     
-    
+    // MARK: Setup
     func setup(viewModel: ProductResultCellViewModel) {
         if let attributes = viewModel.product.attributes {
             productTitleLabel.text = attributes.title ?? "No title"
         }
-
     }
-    
 }

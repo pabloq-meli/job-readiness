@@ -20,7 +20,6 @@ enum APIRouter: URLRequestConvertible {
         switch self {
         case .bestSellers, .categories, .products:
             return .get
-            
         }
     }
     
@@ -56,7 +55,8 @@ enum APIRouter: URLRequestConvertible {
         urlRequest.httpMethod = method.rawValue
         
         /// Set the Authorization header value using the access token.
-        urlRequest.setValue("Bearer " + API.accessToken, forHTTPHeaderField: "Authorization")
+        urlRequest.setValue("Bearer " + API.accessToken,
+                            forHTTPHeaderField: "Authorization")
         
         /// Parameters if added
         if let parameters = parameters {
