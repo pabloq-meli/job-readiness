@@ -14,8 +14,8 @@ class SearchViewModel {
     var products: [Product] = []
     var itemsID: [String] = []
     
-    func getCategories(completion: @escaping (Error?) -> Void) {
-        APIClient.shared.performRequest(route: APIRouter.categories(query: "tablet")) { (result: Result<[Category], AFError>) in
+    func getCategories(query: String, completion: @escaping (Error?) -> Void) {
+        APIClient.shared.performRequest(route: APIRouter.categories(query: query)) { (result: Result<[Category], AFError>) in
             switch result {
             case .success(let success):
                 self.getBestSellersByCategory(categoryId: success.first?.category_id ?? "") { error in
@@ -29,6 +29,7 @@ class SearchViewModel {
 
             case .failure(let failure):
                 print(failure)
+                print("se rompe aca 1")
             }
         }
     }
@@ -48,6 +49,7 @@ class SearchViewModel {
                 }
             case .failure(let failure):
                 print(failure)
+                print("se rompe aca 2")
                 completion(failure)
             }
         }
@@ -55,17 +57,18 @@ class SearchViewModel {
     
     func getProductsInfo(completion: @escaping (Error?) -> Void) {
         bestSellers.forEach { itemsID.append($0.id) }
-        APIClient.shared.performRequest(route: APIRouter.products(items: itemsID)) { (result: Result<[Product], AFError>) in
+        APIClient.shared.performRequest(route: APIRouter.products(items: Array(itemsID[0...19]))) { (result: Result<[Product], AFError>) in
             switch result {
             case .success(let success):
                 for product in success {
-                    if !(product.code > 300) {
+                    if !(product.code > 300) && self.products.count < 20 {
                         self.products.append(product)
                     }
 
                 }
                 completion(nil)
             case .failure(let failure):
+                print("se rompe aca 3")
                 completion(failure)
             }
         }

@@ -15,6 +15,7 @@ class SearchViewController: UIViewController {
             resultsTableView.delegate = self
             resultsTableView.dataSource = self
             resultsTableView.register(UINib(nibName: cellIdentifier, bundle: nil), forCellReuseIdentifier: cellIdentifier)
+            resultsTableView.keyboardDismissMode = .onDrag
         }
     }
     
@@ -28,13 +29,6 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationController()
         setupSearchController()
-        viewModel.getCategories { error in
-            if error == nil {
-                DispatchQueue.main.async {
-                    self.resultsTableView.reloadData()
-                }
-            }
-        }
     }
     
     private func setupSearchController() {
@@ -45,7 +39,7 @@ class SearchViewController: UIViewController {
     }
     
     private func setupNavigationController() {
-        self.navigationItem.title = "Your Title"
+        self.navigationItem.title = "Search"
         
         navigationController?.navigationBar.isTranslucent = false
         let appearance = UINavigationBarAppearance()
@@ -66,7 +60,25 @@ class SearchViewController: UIViewController {
 
 // MARK: SearchController Delegate
 extension SearchViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.fetchResults(_:)), object: searchBar)
+        perform(#selector(self.fetchResults(_:)), with: searchBar, afterDelay: 0.3)
+    }
     
+    @objc func fetchResults(_ searchBar: UISearchBar) {
+        guard let query = searchBar.text else {
+            return
+        }
+        
+        viewModel.bestSellers.removeAll()
+        viewModel.itemsID.removeAll()
+
+        viewModel.getCategories(query: query) { error in
+            if error == nil {
+                self.resultsTableView.reloadData()
+            }
+        }
+    }
 }
 
 // MARK: TableView Delegates
@@ -88,13 +100,13 @@ extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = viewModel.products[indexPath.row]
+        searchController.searchBar.endEditing(true)
         if let attributes = product.attributes {
             if UserDefaults.standard.string(forKey: attributes.id) != nil {
                 navigationController?.pushViewController(ProductDetailViewController(viewModel: ProductDetailViewModel(isFavorite: true, product: product)), animated: true)
             } else {
                 navigationController?.pushViewController(ProductDetailViewController(viewModel: ProductDetailViewModel(isFavorite: false, product: product)), animated: true)
             }
-            
         }
     }
 }
