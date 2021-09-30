@@ -28,6 +28,13 @@ class SearchViewController: UIViewController {
         super.viewDidLoad()
         setupNavigationController()
         setupSearchController()
+        viewModel.getCategories { error in
+            if error == nil {
+                DispatchQueue.main.async {
+                    self.resultsTableView.reloadData()
+                }
+            }
+        }
     }
     
     
@@ -43,7 +50,7 @@ class SearchViewController: UIViewController {
         
         navigationController?.navigationBar.isTranslucent = false
         let appearance = UINavigationBarAppearance()
-        appearance.backgroundColor = .meliColor
+        appearance.backgroundColor = .meli
         appearance.titleTextAttributes = [.foregroundColor: UIColor.darkText]
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
 
@@ -66,7 +73,7 @@ extension SearchViewController: UISearchBarDelegate {
 // MARK: TableView Delegates
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return viewModel.bestSellers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

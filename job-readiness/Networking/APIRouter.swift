@@ -10,52 +10,50 @@ import Alamofire
 
 enum APIRouter: URLRequestConvertible {
     
-    case categories
+    // MARK: Routes
+    case categories(query: String)
+    case bestSellers(categoryId: String)
     
-    
-    // MARK: - HTTPMethod
+    // MARK: HTTPMethod
     private var method: HTTPMethod {
         switch self {
-        case .categories:
+        case .bestSellers, .categories:
             return .get
             
         }
     }
     
-    // MARK: - Path
+    // MARK: Path
     private var path: String {
         switch self {
-        case .categories:
-            return "sites/$SITE_ID/domain_discovery/search?q=$Q"
+        case .bestSellers(let id):
+            return "highlights/\(API.site)/category/\(id)"
+        case .categories(let query):
+            return "sites/\(API.site)/domain_discovery/search?q=\(query)"
         }
     }
     
-    // MARK: - Parameters
+    // MARK: Parameters
     private var parameters: Parameters? {
         switch self {
-        case .categories:
+        case .bestSellers, .categories:
             return nil
         }
     }
     
-    // MARK: - URLRequestConvertible
+    // MARK: URLRequestConvertible
     func asURLRequest() throws -> URLRequest {
         
-        let base = URL(string: API.baseURL.rawValue)!
-        let baseAppend = base.appendingPathComponent(path).absoluteString.removingPercentEncoding
-        let url = URL(string: baseAppend!)
+        let encodedPath = path.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        var urlRequest = URLRequest(url: URL(string: API.baseURL + encodedPath)!)
         
-        var urlRequest =  URLRequest(url: url!)
-        
-        // HTTP Method
+        /// HTTP Method
         urlRequest.httpMethod = method.rawValue
         
-        // Common Headers
-        // Note: not required for current demo but if required to add you can add them as follows
+        /// Set the Authorization header value using the access token.
+        urlRequest.setValue("Bearer " + API.accessToken, forHTTPHeaderField: "Authorization")
         
-//        urlRequest.setValue(HTTPHeaderFieldValue.AcceptTenant.rawValue, forHTTPHeaderField: HTTPHeaderField.AcceptTenant.rawValue)
-        
-        // Parameters if added
+        /// Parameters if added
         if let parameters = parameters {
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
