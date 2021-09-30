@@ -10,13 +10,14 @@ import Alamofire
 
 class APIClient {
 
+    /// singleton
     static let shared = APIClient()
     
     private init() { }
     
-    // generic call to re-use code.
+    /// request
     func performRequest<T:Decodable>(route: APIRouter, decoder: JSONDecoder = JSONDecoder(), completion:@escaping (AFResult<T>)->Void) -> DataRequest {
-        return AF.request(route)
+        AF.request(route)
             .responseDecodable (decoder: decoder){ (response: AFDataResponse<T>) in
                 completion(response.result)
         }

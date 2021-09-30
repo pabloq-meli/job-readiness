@@ -84,6 +84,11 @@ extension SearchViewController: UISearchBarDelegate {
 // MARK: TableView Delegates
 extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if viewModel.products.count == 0 {
+            self.resultsTableView.setEmptyMessage("No products")
+        } else {
+            self.resultsTableView.restore()
+        }
         return viewModel.products.count
     }
     

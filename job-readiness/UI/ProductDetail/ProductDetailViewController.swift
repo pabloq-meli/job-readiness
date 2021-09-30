@@ -27,6 +27,7 @@ class ProductDetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    // MARK: Lifecycle
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -35,10 +36,6 @@ class ProductDetailViewController: UIViewController {
         super.viewDidLoad()
         setupNavUI()
         setupProductData()
-    }
-    
-    private func isFavorite() {
-        
     }
     
     private func setupNavUI() {
@@ -61,13 +58,13 @@ class ProductDetailViewController: UIViewController {
     @objc private func updateFavorite(_ sender: UIBarButtonItem) {
         switch viewModel.isFavorite {
         case true:
-            updateFavoriteStatus(to: false)
+            updateFavoriteStatusOfItem(to: false)
         case false:
-            updateFavoriteStatus(to: true)
+            updateFavoriteStatusOfItem(to: true)
         }
     }
     
-    private func updateFavoriteStatus(to isFavorite: Bool) {
+    private func updateFavoriteStatusOfItem(to isFavorite: Bool) {
         switch isFavorite {
         case true:
             viewModel.shouldSaveFavorite(true)

@@ -28,8 +28,7 @@ class SearchViewModel {
                 }
 
             case .failure(let failure):
-                print(failure)
-                print("se rompe aca 1")
+                completion(failure)
             }
         }
     }
@@ -48,8 +47,6 @@ class SearchViewModel {
                     completion(error)
                 }
             case .failure(let failure):
-                print(failure)
-                print("se rompe aca 2")
                 completion(failure)
             }
         }
@@ -68,7 +65,6 @@ class SearchViewModel {
                 }
                 completion(nil)
             case .failure(let failure):
-                print("se rompe aca 3")
                 completion(failure)
             }
         }
